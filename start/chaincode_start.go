@@ -1,115 +1,170 @@
-/*
-Copyright IBM Corp 2016 All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		 http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package main
 
 import (
 	"errors"
 	"fmt"
 
+	"encoding/json"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-// SimpleChaincode example simple Chaincode implementation
-type SimpleChaincode struct {
+var logger = shim.NewLogger("mylogger")
+
+type StudentChaincode struct {
 }
 
-// ============================================================================================================================
-// Main
-// ============================================================================================================================
-func main() {
-    err := shim.Start(new(SimpleChaincode))
-    if err != nil {
-        fmt.Printf("Error starting Simple chaincode: %s", err)
-    }
-}
+//custom data models
 
-// Init resets all the things
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+
+type StudentApplication struct {
+	ID                     string        `json:"id"`
+	Name 	               string        `json:"name"`
+	Marks                  int           `json:"marks"`
 	}
 
-    err := stub.PutState("hello_world", []byte(args[0]))
-    if err != nil {
-        return nil, err
-    }
+func GetStudentInfo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Debug("Entering GetStudentInfo")
 
-    return nil, nil
-}
-// Invoke is our entry point to invoke a chaincode function
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("invoke is running " + function)
-
-    // Handle different functions
-    if function == "init" {
-        return t.Init(stub, "init", args)
-    } else if function == "write" {
-        return t.write(stub, args)
-    }
-    fmt.Println("invoke did not find func: " + function)
-
-    return nil, errors.New("Received unknown function invocation: " + function)
-}
-// Query is our entry point for queries
-func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
-
-    // Handle different functions
-    if function == "read" {                            //read a variable
-        return t.read(stub, args)
-    }
-    fmt.Println("query did not find func: " + function)
-
-    return nil, errors.New("Received unknown function query: " + function)
-}
-
-func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, value string
-	var err error
-	fmt.Println("running write()")
-
-	if len(args) != 2 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+	if len(args) < 1 {
+		logger.Error("Invalid number of arguments")
+		return nil, errors.New("Missing student application ID")
 	}
 
-	key = args[0]                            //rename for fun
-	value = args[1]
-	err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+	var studentApplicationId = args[0]
+	bytes, err := stub.GetState(studentApplicationId)
+	if err != nil {
+		logger.Error("Could not fetch student application with id "+studentApplicationId+" from ledger", err)
+		return nil, err
+	}
+	return bytes, nil
+}
+
+func CreatestudentApplication(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Debug("Entering CreatestudentApplication")
+
+	if len(args) < 2 {
+		logger.Error("Invalid number of args")
+		return nil, errors.New("Expected atleast two arguments for student application creation")
+	}
+
+	var studentApplicationId = args[0]
+	var studentApplicationInput = args[1]
+
+	err := stub.PutState(studentApplicationId, []byte(studentApplicationInput))
+	if err != nil {
+		logger.Error("Could not save student application to ledger", err)
+		return nil, err
+	}
+
+	var customEvent = "{eventType: 'studentApplicationCreation', description:" + studentApplicationId + "' Successfully created'}"
+	err = stub.SetEvent("evtSender", []byte(customEvent))
 	if err != nil {
 		return nil, err
+	}
+	logger.Info("Successfully saved student application")
+	return nil, nil
+
+}
+
+/**
+Updates the status of the student application
+**/
+func UpdatestudentApplication(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Debug("Entering UpdatestudentApplication")
+
+	if len(args) < 2 {
+		logger.Error("Invalid number of args")
+		return nil, errors.New("Expected atleast two arguments for student application update")
+	}
+
+	var studentApplicationId = args[0]
+	var status = args[1]
+
+	laBytes, err := stub.GetState(studentApplicationId)
+	if err != nil {
+		logger.Error("Could not fetch student application from ledger", err)
+		return nil, err
+	}
+	var studentApplication StudentApplication
+	err = json.Unmarshal(laBytes, &studentApplication)
+	studentApplication.Status = status
+
+	laBytes, err = json.Marshal(&studentApplication)
+	if err != nil {
+		logger.Error("Could not marshal student application post update", err)
+		return nil, err
+	}
+
+	err = stub.PutState(studentApplicationId, laBytes)
+	if err != nil {
+		logger.Error("Could not save student application post update", err)
+		return nil, err
+	}
+
+	var customEvent = "{eventType: 'studentApplicationUpdate', description:" + studentApplicationId + "' Successfully updated status'}"
+	err = stub.SetEvent("evtSender", []byte(customEvent))
+	if err != nil {
+		return nil, err
+	}
+	logger.Info("Successfully updated student application")
+	return nil, nil
+
+}
+
+func (t *StudentChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	return nil, nil
+}
+
+func (t *StudentChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if function == "GetStudentInfo" {
+		return GetStudentInfo(stub, args)
 	}
 	return nil, nil
 }
 
+func GetCertAttribute(stub shim.ChaincodeStubInterface, attributeName string) (string, error) {
+	logger.Debug("Entering GetCertAttribute")
+	attr, err := stub.ReadCertAttribute(attributeName)
+	if err != nil {
+		return "", errors.New("Couldn't get attribute " + attributeName + ". Error: " + err.Error())
+	}
+	attrString := string(attr)
+	return attrString, nil
+}
 
-func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, jsonResp string
-	var err error
+func (t *StudentChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if function == "CreatestudentApplication" {
+		username, _ := GetCertAttribute(stub, "username")
+		role, _ := GetCertAttribute(stub, "role")
+		if role == "Bank_Home_student_Admin" {
+			return CreatestudentApplication(stub, args)
+		} else {
+			return nil, errors.New(username + " with role " + role + " does not have access to create a student application")
+		}
 
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
-    }
+	}
+	return nil, nil
+}
 
-    key = args[0]
-    valAsbytes, err := stub.GetState(key)
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-        return nil, errors.New(jsonResp)
-    }
+type customEvent struct {
+	Type       string `json:"type"`
+	Decription string `json:"description"`
+}
 
-    return valAsbytes, nil
+func main() {
+
+	lld, _ := shim.LogLevel("DEBUG")
+	fmt.Println(lld)
+
+	logger.SetLevel(lld)
+	fmt.Println(logger.IsEnabledFor(lld))
+
+	err := shim.Start(new(StudentChaincode))
+	if err != nil {
+		logger.Error("Could not start StudentChaincode")
+	} else {
+		logger.Info("StudentChaincode successfully started")
+	}
+
 }
