@@ -1,145 +1,163 @@
+
 package main
 
 import (
-	"errors"
-	"fmt"
-
-	"encoding/json"
-
-	"github.com/hyperledger/fabric/core/chaincode/shim"
+        "errors"
+        "fmt"
+       // "strconv"
+        "encoding/json"
+        "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-
-type StudentChaincode struct {
+// CrowdFundChaincode implementation
+type CrowdFundChaincode struct {
 }
+type Info struct {
 
-//custom data models
-
-
-type StudentApplication struct {
-	ID                     string        `json:"id"`
-	Name 				   string        `json:"name"`
-	Marks   		       int           `json:"marks"`
-	}
-
-func GetStudentInfo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	fmt.Printf("Entering GetStudentInfo")
-
-	if len(args) < 1 {
-		fmt.Printf("Invalid number of arguments")
-		return nil, errors.New("Missing student application ID")
-	}
-
-	var studentApplicationId = args[0]
-	bytes, err := stub.GetState(studentApplicationId)
-	if err != nil {
-		fmt.Printf("Could not fetch student application with id "+studentApplicationId+" from ledger", err)
-		return nil, err
-	}
-	return bytes, nil
-}
-
-func CreateStudentApplication(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	fmt.Printf("Entering CreatestudentApplication")
-
-	if len(args) < 2 {
-		fmt.Printf("Invalid number of args")
-		return nil, errors.New("Expected atleast two arguments for student application creation")
-	}
-
-	var studentApplicationId = args[0]
-	var studentApplicationInput = args[1]
-
-	err := stub.PutState(studentApplicationId, []byte(studentApplicationInput))
-	if err != nil {
-		("Could not save student application to ledger", err)
-		return nil, err
-	}
-
-	
-	fmt.Printf("Successfully saved student application")
-	return nil, nil
+        Rollno []string   `json:"rollno"`
+        Name []string `json:"name"`
+        Sem  []string   `json:"sem"`
+        Marks []string `json:"marks"`
 
 }
+//
+// Init creates the state variable with name "account" and stores the value
+// from the incoming request into this variable. We now have a key/value pair
+// for account --> accountValue.
+//
+func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+        // State variable "account"
+        // The value stored inside the state variable "account"
+        
+        // Any error to be reported back to the client
+        var err error
 
-/**
-Updates the status of the student application
-**/
-/*
-func UpdatestudentApplication(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	fmt.Printf("Entering UpdatestudentApplication")
+        if len(args) != 2 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+        }
 
-	if len(args) < 2 {
-		fmt.Printf("Invalid number of args")
-		return nil, errors.New("Expected atleast two arguments for student application update")
-	}
+     //   information := Info{}
+       // informationbyte, err := json.Marshal(information)
+     if err!=nil {
+                        return nil, err
+                }
+         record := Info{}
+       // errrecordmarshal := json.Unmarshal(recordByte,&record);
+        record.Rollno=append(record.Rollno,"MT2016001");
+        record.Name=append(record.Name,"Aarushi");
+        record.Sem=append(record.Sem,"Ist");
+        record.Marks=append(record.Marks,"78");
+        newrecordByte, err := json.Marshal(record);
+        if err!=nil {
 
-	var studentApplicationId = args[0]
-	var status = args[1]
-
-	laBytes, err := stub.GetState(studentApplicationId)
-	if err != nil {
-		fmt.Printf("Could not fetch student application from ledger", err)
-		return nil, err
-	}
-	var studentApplication StudentApplication
-	err = json.Unmarshal(laBytes, &studentApplication)
-	studentApplication.Status = status
-
-	laBytes, err = json.Marshal(&studentApplication)
-	if err != nil {
-		fmt.Printf("Could not marshal student application post update", err)
-		return nil, err
-	}
-
-	err = stub.PutState(studentApplicationId, laBytes)
-	if err != nil {
-		fmt.Printf("Could not save student application post update", err)
-		return nil, err
-	}
-
-	
-	fmt.Printf("Successfully updated student application")
-	return nil, nil
-
-}
-*/
+            return nil, err
+        }
+                err=stub.PutState("default",newrecordByte);
+         if err!=nil {
+                        return nil, err
+                }
 
 
-func (t *StudentChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	
-	return nil, nil
+
+        return nil, nil
 }
 
-func (t *StudentChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if function == "GetStudentInfo" {
-		return GetStudentInfo(stub, args)
-	}
-	return nil, nil
+//
+// Invoke retrieves the state variable "account" and increases it by the ammount
+// specified in the incoming request. Then it stores the new value back, thus
+// updating the ledger.
+//
+func (t *CrowdFundChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+    
+var account string
+
+        var err error
+
+        if len(args) != 5 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+        }
+          account = args[0]
+
+         recordByte, err := stub.GetState(account);
+        fmt.Println(recordByte);
+        if err != nil {
+
+            return nil, err
+        }
+        record := Info{}
+        if recordByte != nil {
+        errrecordmarshal := json.Unmarshal(recordByte,&record);
+        if errrecordmarshal != nil {
+            return nil, errrecordmarshal
+        }    
+               
+        }
+       
+            
+        record.Rollno = append(record.Rollno,args[1]);
+        record.Name = append(record.Name,args[2]);
+        record.Sem=append(record.Sem,args[3]);
+        record.Marks=append(record.Marks,args[4]);
+        newrecordByte, err := json.Marshal(record);
+        if err!=nil {
+
+            return nil, err
+        }
+        err =stub.PutState(account,newrecordByte);
+        if err != nil {
+
+            return nil, err;
+        } 
+        return nil, nil
 }
 
 
+//
+// Query retrieves the state variable "account" and returns its current value
+// in the response.
+//
+func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+  if function != "query" {
+                return nil, errors.New("Invalid query function name. Expecting \"query\".")
+        }
 
-func (t *StudentChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if function == "CreateStudentApplication" {
-		return CreateStudentApplication(stub, args)
-		} /*else {
-			if(function == "init")
-			return nil, errors.New(username + " does not have access to create a student application")
-		}
-*/
-	}
-	return nil, nil
+        // State variable "account"
+       // var account string
+        // Any error to be reported back to the client
+        var err error
+
+         if len(args) != 1 {
+                return nil, errors.New("Incorrect number of arguments. Expecting name of the state variable to query.")
+        }
+
+        // Read in the name of the state variable to be returned
+     var   account = args[0]
+     //   information:=Info{}
+        // Get the current value of the state variable
+        accountValueBytes ,err := stub.GetState(account)
+        if err != nil {
+              //  jsonResp := "{\"Error\":\"Failed to get state for " + account + "\"}"
+                 return nil, err
+        }
+      /*  if accountValueBytes == nil {
+                jsonResp := "{\"Error\":\"Nil amount for " + account + "\"}"
+                return nil, errors.New(jsonResp)
+        }
+      errUnmarshal:=json.Unmarshal(accountValueBytes,&information)
+       if errUnmarshal!=nil {
+                return nil,errUnmarshal
+        }
+        jsonResp := "{\"Name\":\"" + account + "\",\"rollno\":\"" + information.rollno + "\",\"count\":\"" + information.count + "\"}"
+        fmt.Printf("Query Response:%s\n", jsonResp)
+        */
+        return accountValueBytes, nil
 }
-
 
 func main() {
+        err := shim.Start(new(CrowdFundChaincode))
 
-	err := shim.Start(new(StudentChaincode))
-	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
-	} else {
-		fmt.Printf"StudentChaincode successfully started")
-	}
-
+        if err != nil {
+                fmt.Printf("Error starting CrowdFundChaincode: %s", err)
+        }
 }
+
