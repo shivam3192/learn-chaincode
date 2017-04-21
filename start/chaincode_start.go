@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -12,13 +11,30 @@ import (
 // CrowdFundChaincode implementation
 type CrowdFundChaincode struct {
 }
-type Info struct {
+type studentInfo struct {
+        studentRollNo     string  `json:"studentrollno"`
+        studentName        []string   `json:"studentname"`
+        studentBadge       []string  `json:"studentbadge"`
+        studentmarks       []string   `json:"studentmarks"`
+        studentSem         []string   `json:"studentsem"`
+        issuedBy        []string   `json:"issuedby"`
+        
+}
+type BadgeInfo struct {
 
-        Rollno []string   `json:"rollno"`
-        Name []string `json:"name"`
-        Sem  []string   `json:"sem"`
-        Marks []string `json:"marks"`
+        badgeName       []string   `json:"rollno"`
+        badgeUrl        []string `json:"name"`
+        badgeIssuedBy   []string   `json:"sem"`
+        badgeIssuedTo   []string `json:"marks"`
+        //time 
+}
 
+type Issuer struct {
+
+        issuerInfo      []string   `json:"rollno"`
+        issuerName        string `json:"name"`
+       // time            string   `json:"sem"`
+        
 }
 //
 // Init creates the state variable with name "account" and stores the value
@@ -37,12 +53,15 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
      if err!=nil {
                         return nil, err
                 }
-         record := Info{}
+         record := studentInfo{}
        
-        record.Rollno=append(record.Rollno,"MT2016001");
-        record.Name=append(record.Name,"Aarushi");
-        record.Sem=append(record.Sem,"Ist");
-        record.Marks=append(record.Marks,"78");
+        record.studentRollNo=append(record.studentRollNo,"MT2016001");
+        record.studentName=append(record.studentName,"Aarushi");
+        record.studentBadge=append(record.studentBadge,"Mtech");
+        record.studentMarks=append(record.studentMarks,"78");
+        record.studentSem=append(record.studentMarks,"1st");
+        record.issuedBy=append(record.issuedBy,"RC Sir");
+        
         newrecordByte, err := json.Marshal(record);
         if err!=nil {
 
@@ -71,8 +90,8 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
 
         var err error
 
-        if len(args) != 4 {
-                return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+        if len(args) != 6 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 6.")
         }
           account = args[0]
           fmt.Printf(" key is : %s" , account)
@@ -83,7 +102,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
 
             return nil, err
         }
-        record := Info{}
+        record := studentInfo{}
         if recordByte != nil {
         errrecordmarshal := json.Unmarshal(recordByte,&record);
         fmt.Printf(" the unmarshall function output is : %s" , errrecordmarshal)
@@ -94,16 +113,28 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
                
         }
        
+
+
+        record.studentRollNo=append(record.studentRollNo,args[0]);
+        record.studentName=append(record.studentName,args[1]);
+        record.studentBadge=append(record.studentBadge,args[2]);
+        record.studentMarks=append(record.studentMarks,args[3]);
+        record.studentSem=append(record.studentMarks,args[4]);
+        record.issuedBy=append(record.issuedBy,args[5]);
             
-        record.Rollno = append(record.Rollno,args[0]);
+        /*record.Rollno = append(record.Rollno,args[0]);
         record.Name = append(record.Name,args[1]);
         record.Sem=append(record.Sem,args[2]);
         record.Marks=append(record.Marks,args[3]);
+*/
+        fmt.Printf(" record structure rollno is : %s" ,  record.studentRollno)
+        fmt.Printf(" record structure name is   : %s" ,  record.studentName)
+        fmt.Printf(" record structure badge is : %s" ,   record.studentBadge)
+        fmt.Printf(" record structure marks is : : %s" , record.studentMarks)
+        fmt.Printf(" record structure sem is : %s" ,     record.studentSem)
+        fmt.Printf(" record structure issuedby is : %s" ,record.issuedBy)
+        
 
-        fmt.Printf(" record structure rollno is : %s" , record.Rollno)
-        fmt.Printf(" record structure rollno is : %s" , record.Name)
-        fmt.Printf(" record structure rollno is : %s" , record.Sem)
-        fmt.Printf(" record structure rollno is : : %s" , record.Marks)
 
         newrecordByte, err := json.Marshal(record);
 
@@ -154,4 +185,3 @@ func main() {
                 fmt.Printf("Error starting CrowdFundChaincode: %s", err)
         }
 }
-
