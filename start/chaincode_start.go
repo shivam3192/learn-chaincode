@@ -233,10 +233,23 @@ func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function st
 
    
         accountValueBytes ,err := stub.GetState(account)
-        if err != nil {
+
+if err != nil {
               
                  return nil, err
         }
+ record := studentInfo{}
+        if accountValueBytes != nil {
+        errrecordmarshal := json.Unmarshal(accountValueBytes,&record);
+        fmt.Printf(" the unmarshall function output is : %s" , errrecordmarshal)
+
+        if errrecordmarshal != nil {
+            return nil, errrecordmarshal
+        }    
+               
+        }
+
+        
     
         return accountValueBytes, nil
 }
