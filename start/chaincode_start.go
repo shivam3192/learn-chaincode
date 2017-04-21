@@ -86,6 +86,8 @@ func (t *CrowdFundChaincode) Invoke(stub shim.ChaincodeStubInterface, function s
     if function == "write" {
 
 
+fmt.Printf("-----------------------------------inside write function-------------------------------------------------------------");
+
 var account string
 
 fmt.Printf(" the function which has been recieved as input is : %s" , function)
@@ -128,6 +130,8 @@ record := studentInfo{}
 
  } else {
 if (function == "update") {
+fmt.Printf("-----------------------------------inside update function-------------------------------------------------------------");
+
 var account string
 
 fmt.Printf(" the function which has been recieved as input is : %s" , function)
@@ -213,6 +217,9 @@ func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function st
                 return nil, errors.New("Invalid query function name. Expecting \"query\".")
         }
 
+        fmt.Printf("-----------------------------------inside read function-------------------------------------------------------------");
+
+
        var err error
 
          if len(args) != 1 {
@@ -220,6 +227,10 @@ func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function st
         }
 
      var   account = args[0]
+
+
+      fmt.Printf("----------------------------inside read function--------value of account is  %s--------------------------------, account");
+
    
         accountValueBytes ,err := stub.GetState(account)
         if err != nil {
