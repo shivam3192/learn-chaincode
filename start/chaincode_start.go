@@ -82,7 +82,10 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
 
 
 func (t *CrowdFundChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-    
+    if function != "invoke" {
+                return nil, errors.New("Invalid query function name. Expecting \"query\".")
+        }
+
 var account string
 
 fmt.Printf(" the function which has been recieved as input is : %s" , function)
