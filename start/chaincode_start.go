@@ -11,6 +11,7 @@ import (
 // CrowdFundChaincode implementation
 type CrowdFundChaincode struct {
 }
+var index int
 type studentInfo struct {
         studentRollNo     string  `json:"studentrollno"`
         studentName        string   `json:"studentname"`
@@ -82,9 +83,8 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
 
 
 func (t *CrowdFundChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-    if function != "invoke" {
-                return nil, errors.New("Invalid query function name. Expecting \"query\".")
-        }
+    if function == "write" {
+
 
 var account string
 
@@ -99,7 +99,49 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         if len(args) != 6 {
                 return nil, errors.New("Incorrect number of arguments. Expecting 6.")
         }
-          account = args[0]
+          account = args[0]//got the roll no
+          fmt.Printf(" key is : %s" , account)
+record := studentInfo{}
+
+        record.studentRollNo=args[0];
+        record.studentName=args[1];
+        record.studentBadge=append(record.studentBadge,args[2]);
+        record.studentMarks=append(record.studentMarks,args[3]);
+        record.studentSem=append(record.studentMarks,args[4]);
+        record.issuedBy=append(record.issuedBy,args[5]);
+            
+            newrecordByte, err := json.Marshal(record);
+
+
+ if err!=nil {
+
+            return nil, err
+        }
+        err =stub.PutState(account,newrecordByte);
+        if err != nil {
+
+            return nil, err;
+        } 
+        return nil, nil
+
+
+
+ } else {
+if (function == "update") {
+var account string
+
+fmt.Printf(" the function which has been recieved as input is : %s" , function)
+fmt.Printf(" the function which has been recieved as input is : %s" , args[0])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[1])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[2])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
+
+        var err error
+
+        if len(args) != 6 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 6.")
+        }
+          account = args[0]//got the roll no
           fmt.Printf(" key is : %s" , account)
 
          recordByte, err := stub.GetState(account);
@@ -128,6 +170,8 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         record.studentSem=append(record.studentMarks,args[4]);
         record.issuedBy=append(record.issuedBy,args[5]);
             
+
+            
         /*record.Rollno = append(record.Rollno,args[0]);
         record.Name = append(record.Name,args[1]);
         record.Sem=append(record.Sem,args[2]);
@@ -142,7 +186,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         
 
 
-        newrecordByte, err := json.Marshal(record);
+        newrecordByte, err := json.Marshal(record);//result comes in bytes
 
         stringNewRecordByte := string(newrecordByte)
 
@@ -157,13 +201,15 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
 
             return nil, err;
         } 
+}
+}
         return nil, nil
+
 }
 
 
-
 func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-  if function != "query" {
+  if function != "read" {
                 return nil, errors.New("Invalid query function name. Expecting \"query\".")
         }
 
