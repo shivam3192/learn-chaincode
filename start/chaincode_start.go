@@ -13,9 +13,9 @@ type CrowdFundChaincode struct {
 }
 type studentInfo struct {
         studentRollNo     string  `json:"studentrollno"`
-        studentName        []string   `json:"studentname"`
+        studentName        string   `json:"studentname"`
         studentBadge       []string  `json:"studentbadge"`
-        studentmarks       []string   `json:"studentmarks"`
+        studentMarks       []string   `json:"studentmarks"`
         studentSem         []string   `json:"studentsem"`
         issuedBy        []string   `json:"issuedby"`
         
@@ -55,8 +55,11 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                 }
          record := studentInfo{}
        
-        record.studentRollNo=append(record.studentRollNo,"MT2016001");
-        record.studentName=append(record.studentName,"Aarushi");
+       record.studentRollNo ="MT2916"
+       record.studentName ="aarushi"
+        
+        //record.studentRollNo=append(record.studentRollNo,"MT2016001");
+        //record.studentName=append(record.studentName,"Aarushi");
         record.studentBadge=append(record.studentBadge,"Mtech");
         record.studentMarks=append(record.studentMarks,"78");
         record.studentSem=append(record.studentMarks,"1st");
@@ -115,8 +118,8 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
        
 
 
-        record.studentRollNo=append(record.studentRollNo,args[0]);
-        record.studentName=append(record.studentName,args[1]);
+        record.studentRollNo=args[0];
+        record.studentName=args[1];
         record.studentBadge=append(record.studentBadge,args[2]);
         record.studentMarks=append(record.studentMarks,args[3]);
         record.studentSem=append(record.studentMarks,args[4]);
@@ -127,7 +130,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         record.Sem=append(record.Sem,args[2]);
         record.Marks=append(record.Marks,args[3]);
 */
-        fmt.Printf(" record structure rollno is : %s" ,  record.studentRollno)
+        fmt.Printf(" record structure rollno is : %s" ,  record.studentRollNo)
         fmt.Printf(" record structure name is   : %s" ,  record.studentName)
         fmt.Printf(" record structure badge is : %s" ,   record.studentBadge)
         fmt.Printf(" record structure marks is : : %s" , record.studentMarks)
