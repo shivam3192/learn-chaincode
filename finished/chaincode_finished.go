@@ -1,115 +1,190 @@
-/*
-Copyright IBM Corp 2016 All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		 http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package main
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/hyperledger/fabric/core/chaincode/shim"
+        "errors"
+        "fmt"
+       
+        "encoding/json"
+        "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-// SimpleChaincode example simple Chaincode implementation
-type SimpleChaincode struct {
+// CrowdFundChaincode implementation
+type CrowdFundChaincode struct {
+}
+type studentInfo struct {
+        studentRollNo     string  `json:"studentrollno"`
+        studentName        string   `json:"studentname"`
+        studentBadge       []string  `json:"studentbadge"`
+        studentMarks       []string   `json:"studentmarks"`
+        studentSem         []string   `json:"studentsem"`
+        issuedBy        []string   `json:"issuedby"`
+        
+}
+type BadgeInfo struct {
+
+        badgeName       []string   `json:"rollno"`
+        badgeUrl        []string `json:"name"`
+        badgeIssuedBy   []string   `json:"sem"`
+        badgeIssuedTo   []string `json:"marks"`
+        //time 
+}
+
+type Issuer struct {
+
+        issuerInfo      []string   `json:"rollno"`
+        issuerName        string `json:"name"`
+       // time            string   `json:"sem"`
+        
+}
+//
+// Init creates the state variable with name "account" and stores the value
+// from the incoming request into this variable. We now have a key/value pair
+// for account --> accountValue.
+//
+func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+       
+        var err error
+
+        if len(args) != 2 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+        }
+
+   
+     if err!=nil {
+                        return nil, err
+                }
+         record := studentInfo{}
+       
+       record.studentRollNo ="MT2916"
+       record.studentName ="aarushi"
+        
+        //record.studentRollNo=append(record.studentRollNo,"MT2016001");
+        //record.studentName=append(record.studentName,"Aarushi");
+        record.studentBadge=append(record.studentBadge,"Mtech");
+        record.studentMarks=append(record.studentMarks,"78");
+        record.studentSem=append(record.studentMarks,"1st");
+        record.issuedBy=append(record.issuedBy,"RC Sir");
+        
+        newrecordByte, err := json.Marshal(record);
+        if err!=nil {
+
+            return nil, err
+        }
+                err=stub.PutState("default",newrecordByte);
+         if err!=nil {
+                        return nil, err
+                }
+
+
+
+        return nil, nil
+}
+
+
+func (t *CrowdFundChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+    
+var account string
+
+fmt.Printf(" the function which has been recieved as input is : %s" , function)
+fmt.Printf(" the function which has been recieved as input is : %s" , args[0])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[1])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[2])
+fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
+
+        var err error
+
+        if len(args) != 6 {
+                return nil, errors.New("Incorrect number of arguments. Expecting 6.")
+        }
+          account = args[0]
+          fmt.Printf(" key is : %s" , account)
+
+         recordByte, err := stub.GetState(account);
+        fmt.Println(recordByte);
+        if err != nil {
+
+            return nil, err
+        }
+        record := studentInfo{}
+        if recordByte != nil {
+        errrecordmarshal := json.Unmarshal(recordByte,&record);
+        fmt.Printf(" the unmarshall function output is : %s" , errrecordmarshal)
+
+        if errrecordmarshal != nil {
+            return nil, errrecordmarshal
+        }    
+               
+        }
+       
+
+
+        record.studentRollNo=args[0];
+        record.studentName=args[1];
+        record.studentBadge=append(record.studentBadge,args[2]);
+        record.studentMarks=append(record.studentMarks,args[3]);
+        record.studentSem=append(record.studentMarks,args[4]);
+        record.issuedBy=append(record.issuedBy,args[5]);
+            
+        /*record.Rollno = append(record.Rollno,args[0]);
+        record.Name = append(record.Name,args[1]);
+        record.Sem=append(record.Sem,args[2]);
+        record.Marks=append(record.Marks,args[3]);
+*/
+        fmt.Printf(" record structure rollno is : %s" ,  record.studentRollNo)
+        fmt.Printf(" record structure name is   : %s" ,  record.studentName)
+        fmt.Printf(" record structure badge is : %s" ,   record.studentBadge)
+        fmt.Printf(" record structure marks is : : %s" , record.studentMarks)
+        fmt.Printf(" record structure sem is : %s" ,     record.studentSem)
+        fmt.Printf(" record structure issuedby is : %s" ,record.issuedBy)
+        
+
+
+        newrecordByte, err := json.Marshal(record);
+
+        stringNewRecordByte := string(newrecordByte)
+
+        fmt.Printf(" the marshall function output is : %s" , stringNewRecordByte)
+
+        if err!=nil {
+
+            return nil, err
+        }
+        err =stub.PutState(account,newrecordByte);
+        if err != nil {
+
+            return nil, err;
+        } 
+        return nil, nil
+}
+
+
+
+func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+  if function != "query" {
+                return nil, errors.New("Invalid query function name. Expecting \"query\".")
+        }
+
+       var err error
+
+         if len(args) != 1 {
+                return nil, errors.New("Incorrect number of arguments. Expecting name of the state variable to query.")
+        }
+
+     var   account = args[0]
+   
+        accountValueBytes ,err := stub.GetState(account)
+        if err != nil {
+              
+                 return nil, err
+        }
+    
+        return accountValueBytes, nil
 }
 
 func main() {
-	err := shim.Start(new(SimpleChaincode))
-	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
-	}
-}
+        err := shim.Start(new(CrowdFundChaincode))
 
-// Init resets all the things
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
-	}
-
-	err := stub.PutState("hello_world", []byte(args[0]))
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
-}
-
-// Invoke isur entry point to invoke a chaincode function
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("invoke is running " + function)
-
-	// Handle different functions
-	if function == "init" {
-		return t.Init(stub, "init", args)
-	} else if function == "write" {
-		return t.write(stub, args)
-	}
-	fmt.Println("invoke did not find func: " + function)
-
-	return nil, errors.New("Received unknown function invocation: " + function)
-}
-
-// Query is our entry point for queries
-func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
-
-	// Handle different functions
-	if function == "read" { //read a variable
-		return t.read(stub, args)
-	}
-	fmt.Println("query did not find func: " + function)
-
-	return nil, errors.New("Received unknown function query: " + function)
-}
-
-// write - invoke function to write key/value pair
-func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, value string
-	var err error
-	fmt.Println("running write()")
-
-	if len(args) != 2 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
-	}
-
-	key = args[0] //rename for funsies
-	value = args[1]
-	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
-	if err != nil {
-		return nil, err
-	}
-	return nil, nil
-}
-
-// read - query function to read key/value pair
-func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, jsonResp string
-	var err error
-
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
-	}
-
-	key = args[0]
-	valAsbytes, err := stub.GetState(key)
-	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-		return nil, errors.New(jsonResp)
-	}
-
-	return valAsbytes, nil
+        if err != nil {
+                fmt.Printf("Error starting CrowdFundChaincode: %s", err)
+        }
 }
