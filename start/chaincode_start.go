@@ -51,10 +51,10 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
         }
 
    
-  //   if err!=nil {
-    //                    return nil, err
-      //          }
-        // record := StudentInfo{}
+     if err!=nil {
+                        return nil, err
+                }
+         record := StudentInfo{}
        
        /*record.StudentRollNo ="MT2916"
        record.StudentName ="aarushi"
