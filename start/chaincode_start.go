@@ -56,7 +56,7 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                 }
          record := StudentInfo{}
        
-       /*record.StudentRollNo ="MT2916"
+       record.StudentRollNo ="MT2916"
        record.StudentName ="aarushi"
         
         record.StudentRollNo=append(record.StudentRollNo,"MT2016001");
@@ -75,7 +75,7 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
          if err!=nil {
                         return nil, err
             }
-*/
+
         return nil, nil
 }
 
