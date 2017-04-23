@@ -11,29 +11,29 @@ import (
 // CrowdFundChaincode implementation
 type CrowdFundChaincode struct {
 }
-var index int
-type studentInfo struct {
-        studentRollNo     string  `json:"studentrollno"`
-        studentName        string   `json:"studentname"`
-        studentBadge       []string  `json:"studentbadge"`
-        studentMarks       []string   `json:"studentmarks"`
-        studentSem         []string   `json:"studentsem"`
-        issuedBy        []string   `json:"issuedby"`
+//var index int
+type StudentInfo struct {
+        StudentRollNo     string  `json:"Studentrollno"`
+        StudentName        string   `json:"Studentname"`
+        StudentBadge       []string  `json:"Studentbadge"`
+        StudentMarks       []string   `json:"Studentmarks"`
+        StudentSem         []string   `json:"Studentsem"`
+        IssuedBy        []string   `json:"Issuedby"`
         
 }
 type BadgeInfo struct {
 
-        badgeName       []string   `json:"rollno"`
-        badgeUrl        []string `json:"name"`
-        badgeIssuedBy   []string   `json:"sem"`
-        badgeIssuedTo   []string `json:"marks"`
+        BadgeName       []string   `json:"Badgeame"`
+        BadgeUrl        []string `json:"Badgeurl"`
+        BadgeIssuedBy   []string   `json:"Badgeissuedby"`
+        BadgeIssuedTo   []string `json:"Badgeissuedto"`
         //time 
 }
 
 type Issuer struct {
 
-        issuerInfo      []string   `json:"rollno"`
-        issuerName        string `json:"name"`
+        IssuerInfo      []string   `json:"Issuerinfo"`
+        IssuerName        string `json:"Issuername"`
        // time            string   `json:"sem"`
         
 }
@@ -51,20 +51,20 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
         }
 
    
-     if err!=nil {
-                        return nil, err
-                }
-         record := studentInfo{}
+  //   if err!=nil {
+    //                    return nil, err
+      //          }
+        // record := StudentInfo{}
        
-       record.studentRollNo ="MT2916"
-       record.studentName ="aarushi"
+       /*record.StudentRollNo ="MT2916"
+       record.StudentName ="aarushi"
         
-        //record.studentRollNo=append(record.studentRollNo,"MT2016001");
-        //record.studentName=append(record.studentName,"Aarushi");
-        record.studentBadge=append(record.studentBadge,"Mtech");
-        record.studentMarks=append(record.studentMarks,"78");
-        record.studentSem=append(record.studentMarks,"1st");
-        record.issuedBy=append(record.issuedBy,"RC Sir");
+        record.StudentRollNo=append(record.StudentRollNo,"MT2016001");
+        record.StudentName=append(record.StudentName,"Aarushi");
+        record.StudentBadge=append(record.StudentBadge,"Mtech");
+        record.StudentMarks=append(record.StudentMarks,"78");
+        record.StudentSem=append(record.StudentMarks,"1st");
+        record.IssuedBy=append(record.IssuedBy,"RC Sir");
         
         newrecordByte, err := json.Marshal(record);
         if err!=nil {
@@ -74,10 +74,8 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                 err=stub.PutState("default",newrecordByte);
          if err!=nil {
                         return nil, err
-                }
-
-
-
+            }
+*/
         return nil, nil
 }
 
@@ -103,14 +101,14 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         }
           account = args[0]//got the roll no
           fmt.Printf(" key is : %s" , account)
-record := studentInfo{}
+record := StudentInfo{}
 
-        record.studentRollNo=args[0];
-        record.studentName=args[1];
-        record.studentBadge=append(record.studentBadge,args[2]);
-        record.studentMarks=append(record.studentMarks,args[3]);
-        record.studentSem=append(record.studentMarks,args[4]);
-        record.issuedBy=append(record.issuedBy,args[5]);
+        record.StudentRollNo=args[0];
+        record.StudentName=args[1];
+        record.StudentBadge=append(record.StudentBadge,args[2]);
+        record.StudentMarks=append(record.StudentMarks,args[3]);
+        record.StudentSem=append(record.StudentMarks,args[4]);
+        record.SssuedBy=append(record.IssuedBy,args[5]);
             
             newrecordByte, err := json.Marshal(record);
 
@@ -154,7 +152,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
 
             return nil, err
         }
-        record := studentInfo{}
+        record := StudentInfo{}
         if recordByte != nil {
         errrecordmarshal := json.Unmarshal(recordByte,&record);
         fmt.Printf(" the unmarshall function output is : %s" , errrecordmarshal)
@@ -167,12 +165,12 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
        
 
 
-        record.studentRollNo=args[0];
-        record.studentName=args[1];
-        record.studentBadge=append(record.studentBadge,args[2]);
-        record.studentMarks=append(record.studentMarks,args[3]);
-        record.studentSem=append(record.studentMarks,args[4]);
-        record.issuedBy=append(record.issuedBy,args[5]);
+        record.StudentRollNo=args[0];
+        record.StudentName=args[1];
+        record.StudentBadge=append(record.StudentBadge,args[2]);
+        record.StudentMarks=append(record.StudentMarks,args[3]);
+        record.StudentSem=append(record.StudentMarks,args[4]);
+        record.IssuedBy=append(record.IssuedBy,args[5]);
             
 
             
@@ -181,12 +179,12 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         record.Sem=append(record.Sem,args[2]);
         record.Marks=append(record.Marks,args[3]);
 */
-        fmt.Printf(" record structure rollno is : %s" ,  record.studentRollNo)
-        fmt.Printf(" record structure name is   : %s" ,  record.studentName)
-        fmt.Printf(" record structure badge is : %s" ,   record.studentBadge)
-        fmt.Printf(" record structure marks is : : %s" , record.studentMarks)
-        fmt.Printf(" record structure sem is : %s" ,     record.studentSem)
-        fmt.Printf(" record structure issuedby is : %s" ,record.issuedBy)
+        fmt.Printf(" record structure rollno is : %s" ,  record.StudentRollNo)
+        fmt.Printf(" record structure name is   : %s" ,  record.StudentName)
+        fmt.Printf(" record structure badge is : %s" ,   record.StudentBadge)
+        fmt.Printf(" record structure marks is : : %s" , record.StudentMarks)
+        fmt.Printf(" record structure sem is : %s" ,     record.StudentSem)
+        fmt.Printf(" record structure issuedby is : %s" ,record.IssuedBy)
         
 
 
@@ -216,7 +214,7 @@ func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function st
   if function != "read" {
                 return nil, errors.New("Invalid query function name. Expecting \"query\".")
         }
-
+else {
         fmt.Printf("-----------------------------------inside read function-------------------------------------------------------------");
 
 
@@ -238,7 +236,7 @@ if err != nil {
               
                  return nil, err
         }
- record := studentInfo{}
+ record := StudentInfo{}
         if accountValueBytes != nil {
         errrecordmarshal := json.Unmarshal(accountValueBytes,&record);
         fmt.Printf(" the unmarshall function output is : %s" , errrecordmarshal)
@@ -252,6 +250,7 @@ if err != nil {
         
     
         return accountValueBytes, nil
+    }
 }
 
 func main() {
