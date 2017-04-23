@@ -59,8 +59,8 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
        record.StudentRollNo ="MT2916"
        record.StudentName ="aarushi"
         
-        record.StudentRollNo=append(record.StudentRollNo,"MT2016001");
-        record.StudentName=append(record.StudentName,"Aarushi");
+        //record.StudentRollNo=append(record.StudentRollNo,"MT2016001");
+        //record.StudentName=append(record.StudentName,"Aarushi");
         record.StudentBadge=append(record.StudentBadge,"Mtech");
         record.StudentMarks=append(record.StudentMarks,"78");
         record.StudentSem=append(record.StudentMarks,"1st");
