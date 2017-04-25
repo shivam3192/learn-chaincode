@@ -46,9 +46,9 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
        
         var err error
 
-        if len(args) != 2 {
-                return nil, errors.New("Incorrect number of arguments. Expecting 2.")
-        }
+        //if len(args) != 2 {
+          //      return nil, errors.New("Incorrect number of arguments. Expecting 2.")
+        //}
 
 /*   
      if err!=nil {
