@@ -213,8 +213,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
 func (t *CrowdFundChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
   if function != "read" {
                 return nil, errors.New("Invalid query function name. Expecting \"query\".")
-        }
-else {
+        } else {
         fmt.Printf("-----------------------------------inside read function-------------------------------------------------------------");
 
 
