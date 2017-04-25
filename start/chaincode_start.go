@@ -56,14 +56,14 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                 }
          record := StudentInfo{}
        
-       record.StudentRollNo ="MT2916"
-       record.StudentName ="aarushi"
+       record.StudentRollNo ="MT2916";
+       record.StudentName ="aarushi";
         
         //record.StudentRollNo=append(record.StudentRollNo,"MT2016001");
         //record.StudentName=append(record.StudentName,"Aarushi");
         record.StudentBadge=append(record.StudentBadge,"Mtech");
         record.StudentMarks=append(record.StudentMarks,"78");
-        record.StudentSem=append(record.StudentMarks,"1st");
+        record.StudentSem=append(record.StudentSem,"1st");
         record.IssuedBy=append(record.IssuedBy,"RC Sir");
         
         newrecordByte, err := json.Marshal(record);
@@ -107,8 +107,8 @@ record := StudentInfo{}
         record.StudentName=args[1];
         record.StudentBadge=append(record.StudentBadge,args[2]);
         record.StudentMarks=append(record.StudentMarks,args[3]);
-        record.StudentSem=append(record.StudentMarks,args[4]);
-        record.SssuedBy=append(record.IssuedBy,args[5]);
+        record.StudentSem=append(record.StudentSem,args[4]);
+        record.IssuedBy=append(record.IssuedBy,args[5]);
             
             newrecordByte, err := json.Marshal(record);
 
@@ -169,7 +169,7 @@ fmt.Printf(" the function which has been recieved as input is : %s" , args[3])
         record.StudentName=args[1];
         record.StudentBadge=append(record.StudentBadge,args[2]);
         record.StudentMarks=append(record.StudentMarks,args[3]);
-        record.StudentSem=append(record.StudentMarks,args[4]);
+        record.StudentSem=append(record.StudentSem,args[4]);
         record.IssuedBy=append(record.IssuedBy,args[5]);
             
 
