@@ -13,7 +13,6 @@ import (
 type SimpleChaincode struct {
 }
 
-type 
 
 func main() {
 	err := shim.Start(new(SimpleChaincode))
