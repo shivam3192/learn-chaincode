@@ -36,7 +36,7 @@ var roll_no string ;
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	err := stub.PutState("roll_no", []byte(args[0]))
+	err := stub.PutState(roll_no, []byte(args[0]))
 	if err != nil {
 		return nil, err
 	}
