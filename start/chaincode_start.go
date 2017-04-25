@@ -11,6 +11,10 @@ import (
 
 // StudentInfo example simple Chaincode implementation
 type StudentInfo struct {
+
+        StudentRollNo     string  `json:"Studentrollno"`
+        StudentName        string   `json:"Studentname"`
+
 }
 
 
@@ -24,6 +28,10 @@ func main() {
 
 // Init resets all the things
 func (t *StudentInfo) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+
+var roll_no string ;
+
+
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
