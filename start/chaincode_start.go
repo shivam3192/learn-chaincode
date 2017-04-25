@@ -50,7 +50,7 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                 return nil, errors.New("Incorrect number of arguments. Expecting 2.")
         }
 
-   
+/*   
      if err!=nil {
                         return nil, err
                 }
@@ -76,7 +76,7 @@ func (t *CrowdFundChaincode) Init(stub shim.ChaincodeStubInterface, function str
                         return nil, err
             }
 
-        return nil, nil
+*/        return nil, nil
 }
 
 
