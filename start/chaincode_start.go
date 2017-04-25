@@ -9,21 +9,21 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-// StudentInfo example simple Chaincode implementation
-type StudentInfo struct {
+// SimpleChaincode example simple Chaincode implementation
+type SimpleChaincode struct {
 }
 
 type 
 
 func main() {
-	err := shim.Start(new(StudentInfo))
+	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
 }
 
 // Init resets all the things
-func (t *StudentInfo) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
@@ -37,7 +37,7 @@ func (t *StudentInfo) Init(stub shim.ChaincodeStubInterface, function string, ar
 }
 
 // Invoke isur entry point to invoke a chaincode function
-func (t *StudentInfo) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
@@ -52,7 +52,7 @@ func (t *StudentInfo) Invoke(stub shim.ChaincodeStubInterface, function string, 
 }
 
 // Query is our entry point for queries
-func (t *StudentInfo) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
 
 	// Handle different functions
@@ -65,7 +65,7 @@ func (t *StudentInfo) Query(stub shim.ChaincodeStubInterface, function string, a
 }
 
 // write - invoke function to write key/value pair
-func (t *StudentInfo) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, value string
 	var err error
 	fmt.Println("running write()")
@@ -84,7 +84,7 @@ func (t *StudentInfo) write(stub shim.ChaincodeStubInterface, args []string) ([]
 }
 
 // read - query function to read key/value pair
-func (t *StudentInfo) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, jsonResp string
 	var err error
 
